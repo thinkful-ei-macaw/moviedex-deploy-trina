@@ -14,8 +14,10 @@ app.use(morgan("dev"));
 const cors = require("cors");
 app.use(cors);
 
-app.listen(8000, () => {
-  console.log("Express server is listening on port 8000!");
+const PORT = 8000;
+
+app.listen(PORT, () => {
+  console.log(`Server listening at http://localhost:${PORT}`);
 });
 
 function validateAuthorization(req, res, next) { }
