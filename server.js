@@ -1,7 +1,8 @@
-//require("dotenv").config(); add .env file to hide the api key
+require("dotenv").config();
 
 const express = require("express");
 const morgan = require("morgan");
+console.log(process.env.API_TOKEN);
 
 const movieData = require("./movies-data-small.json");
 
@@ -20,7 +21,8 @@ app.listen(PORT, () => {
   console.log(`Server listening at http://localhost:${PORT}`);
 });
 
-app.get("/movie", (req, res) => {});
+const validTypes = [""];
+function handleGetMovies(req, res) {}
 
 // function validateAuthorization(req, res, next) {}
 
@@ -36,7 +38,7 @@ app.get("/movie", (req, res) => {});
 // }
 
 // //GET types
-// app.get("/types", handleTypes);
+app.get("/types", handleGetMovies);
 // app.get("/valid-types", handleTypes);
 
 // // app.get ("/movie", (req, res) {
