@@ -18,9 +18,9 @@ app.listen(8000, () => {
   console.log("Express server is listening on port 8000!");
 });
 
-function validateAuthorization(req, res, next) {}
+function validateAuthorization(req, res, next) { }
 
-function handleTypes(req, res) {}
+function handleTypes(req, res) { }
 
 //GET types
 app.get("/types", handleTypes);
