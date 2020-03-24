@@ -2,27 +2,30 @@ require("dotenv").config();
 
 const express = require("express");
 const morgan = require("morgan");
-console.log(process.env.API_TOKEN);
-
-const movieData = require("./movies-data-small.json");
+const cors = require("cors");
+const helmet = require("helmet");
+const MOVIES = require("./movies-data-small.json");
 
 const app = express();
 
-// const API_TOKEN = process.env.API_TOKEN; get uuid for api token
-
 app.use(morgan("dev"));
+app.use(helmet());
+app.use(cors());
 
-const cors = require("cors");
-app.use(cors);
+app.use(function validateBearerToken(req, res, next) {
+  const apiToken = process.env.API_TOKEN;
+  const authToken = req.get("Authorization");
+  if (!authToken || authToken.split(" ")[1] !== apiToken) {
+    return res.status(401).json({ error: "unauthorised request" });
+  }
 
-const PORT = 8000;
-
-app.listen(PORT, () => {
-  console.log(`Server listening at http://localhost:${PORT}`);
+  next();
 });
 
 //search by genre, country, or avg_vote
-app.get("/movie", (req, res) => {
+app.get("/movie", function handleGetMovies(req, res) {
+  let response = MOVIES;
+
   if (req.query.name) {
     response = movieData.filter(movie =>
       movie.film_title.toLowerCase().includes(request.query.name.toLowerCase())
@@ -40,25 +43,11 @@ app.get("/movie", (req, res) => {
         .includes(request.query.avg_vote.toLowerCase())
     );
   }
+  res.json(response);
 });
 
-// function validateAuthorization(req, res, next) {}
+const PORT = 8000;
 
-// function handleTypes(req, res) {
-//   let response = movieData;
-//   //
-
-//   // if(country)
-
-//   // if(avg_vote)
-
-//   res.json(response);
-// }
-
-// //GET types
-app.get("/types", handleGetMovies);
-// app.get("/valid-types", handleTypes);
-
-// // app.get ("/movie", (req, res) {
-
-// // })
+app.listen(PORT, () => {
+  console.log(`Server listening at http://localhost:${PORT}`);
+});
