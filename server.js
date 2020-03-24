@@ -6,6 +6,8 @@ const cors = require("cors");
 const helmet = require("helmet");
 const MOVIES = require("./movies-data-small.json");
 
+//console.log(process.env.API_TOKEN);
+
 const app = express();
 
 app.use(morgan("dev"));
@@ -26,21 +28,19 @@ app.use(function validateBearerToken(req, res, next) {
 app.get("/movie", function handleGetMovies(req, res) {
   let response = MOVIES;
 
-  if (req.query.name) {
-    response = movieData.filter(movie =>
-      movie.film_title.toLowerCase().includes(request.query.name.toLowerCase())
+  if (req.query.genre) {
+    response = response.filter(movie =>
+      movie.genre.toLowerCase().includes(req.query.genre.toLowerCase())
     );
   }
   if (req.query.country) {
-    response = movieData.filter(movie =>
-      movie.country.toLowerCase().includes(request.query.country.toLowerCase())
+    response = response.filter(movie =>
+      movie.country.toLowerCase().includes(req.query.country.toLowerCase())
     );
   }
   if (req.query.avg_vote) {
-    response = movieData.filter(movie =>
-      movie.avg_vote
-        .toLowerCase()
-        .includes(request.query.avg_vote.toLowerCase())
+    response = response.filter(
+      movie => Number(movie.avg_vote) >= Number(req.query.avg_vote)
     );
   }
   res.json(response);
