@@ -9,8 +9,9 @@ const MOVIES = require("./movies-data-small.json");
 //console.log(process.env.API_TOKEN);
 
 const app = express();
+const morganSetting = process.env.NODE_ENV === 'production' ? 'tiny' : 'common'
 
-app.use(morgan("dev"));
+app.use(morgan(morganSetting));
 app.use(helmet());
 app.use(cors());
 
@@ -20,9 +21,18 @@ app.use(function validateBearerToken(req, res, next) {
   if (!authToken || authToken.split(" ")[1] !== apiToken) {
     return res.status(401).json({ error: "unauthorised request" });
   }
-
   next();
 });
+
+app.use((error, req, res, next) => {
+  let response
+  if (process.env.NODE_ENV === 'production') {
+    response = { error: { message: 'server error' }}
+  } else {
+    response = { error }
+  }
+  res.status(500).json(response)
+})
 
 //search by genre, country, or avg_vote
 app.get("/movie", function handleGetMovies(req, res) {
@@ -46,8 +56,9 @@ app.get("/movie", function handleGetMovies(req, res) {
   res.json(response);
 });
 
-const PORT = 8000;
+const PORT = 8000 || process.env.PORT;
 
 app.listen(PORT, () => {
+  //should this be removed for production?
   console.log(`Server listening at http://localhost:${PORT}`);
 });
